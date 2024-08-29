@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { customerError, amountError, statusError } from "@/app/lib/constants";
 import { State } from "@/app/lib/actions";
 
@@ -10,19 +11,22 @@ export function FormError({
   errorType: string,
 }) {
   if (!state?.errors || !errorType) return null;
+
+  let errorsList: string[] = [];
+
   if (errorType === customerError && state.errors?.customerId) {
-    return (
-      state.errors.customerId.map((error: string) => <FormMessage error={error} />)
-    );
+    errorsList = state.errors.customerId;
   } else if (errorType === amountError && state.errors?.amount) {
-    return (
-      state.errors.amount.map((error: string) => <FormMessage error={error} />)
-    );
+    errorsList = state.errors.amount;
   } else if (errorType === statusError && state.errors?.status) {
-    return (
-      state.errors.status.map((error: string) => <FormMessage error={error} />)
-    );
+    errorsList = state.errors.status;
   }
+
+  return errorsList.map((error) => (
+    <Fragment key={error}>
+      <FormMessage error={error} errorType={errorType} />
+    </Fragment>
+  ));
 };
 
 
@@ -35,7 +39,7 @@ function FormMessage({ error, errorType }: { error?: string, errorType?: string 
       aria-live="polite"
       aria-atomic="true"
     >
-      <p className="mt-2 text-sm text-red-500" key={error}>
+      <p className="mt-2 text-sm text-red-500">
         {error}
       </p>
     </div>
