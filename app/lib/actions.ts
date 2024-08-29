@@ -36,6 +36,7 @@ export type State = {
   message?: string | null;
 };
 
+
 export async function createInvoice(prevState: State, formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get("customerId"),
@@ -106,20 +107,18 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
 
 
 export async function deleteInvoice(id: string) {
-  // throw new Error('Failed to Delete Invoice - Intentional Error');
   try {
     await sql`
       DELETE FROM invoices
       WHERE id = ${id}
     `;
+    revalidatePath('/dashboard/invoices');
     return { message: 'Deleted Invoice.' };
   } catch (error) {
     return {
       message: "Database Error: Failed to delete invoice.",
     };
   };
-
-  revalidatePath('/dashboard/invoices');
 };
 
 
